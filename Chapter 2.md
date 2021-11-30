@@ -196,7 +196,7 @@ b[[2]][[1]] <- 10
 obj_size(b)
 obj_size(a, b)
 
-2.5.3 Exercises
+#2.5.3 Exercises
 Explain why the following code doesn’t create a circular list.
 
 x <- list()
