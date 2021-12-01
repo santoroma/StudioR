@@ -1,0 +1,196 @@
+---
+title: "Studio di R"
+author: "Alessandro Dell'Orto"
+date: "November 30, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Chapet 2
+
+Given the following data frame, how do I create a new column called “3” 
+that contains the sum of 1 and 2? You may only use $, not [[. 
+What makes 1, 2, and 3 challenging as variable names?
+```{r}
+df <- data.frame(runif(3), runif(3))
+names(df) <- c(1, 2)
+#### my answer
+df[3]<-df[1]+df[2]
+names(df[3])<-3
+print(df)
+```
+
+
+
+In the following code, how much memory does y occupy?
+```{r}
+x <- runif(1e6)
+y <- list(x, x, x)
+### #my answer
+object.size(y)
+```
+
+
+
+On which line does a get copied in the following example?
+```{r}
+a <- c(1, 5, 3, 2)
+b <- a
+b[[1]] <- 10
+#### my answer
+#### at the last. i used lobstr::obj_addr to check
+```
+
+
+
+Explain the relationship between a, b, c and d in the following code:
+```{r}
+a <- 1:10
+b <- a
+c <- b
+d <- 1:10
+####my answer
+#### a,b,c point to the same address. 
+lobstr::obj_addr(a)==lobstr::obj_addr(b) & lobstr::obj_addr(a)==lobstr::obj_addr(c)
+lobstr::obj_addr(d)!=lobstr::obj_addr(a)
+```
+
+
+
+The following code accesses the mean function in multiple ways. 
+Do they all point to the same underlying function object? Verify this with lobstr::obj_addr().
+```{r}
+mean
+base::mean
+get("mean")
+evalq(mean)
+match.fun("mean")
+####my answer
+lobstr::obj_addr(mean)==lobstr::obj_addr(base::mean) & lobstr::obj_addr(mean)==lobstr::obj_addr(get("mean")) &
+lobstr::obj_addr(mean)==lobstr::obj_addr(evalq(mean)) & lobstr::obj_addr(mean)==lobstr::obj_addr(match.fun("mean")) 
+```
+
+
+
+By default, base R data import functions, like read.csv(), will automatically convert non-syntactic names 
+to syntactic ones. Why might this be problematic? What option allows you to suppress this behaviour?
+```{r}
+#### my answer. cit [stackoverflow]
+?check.names
+#### check.names: logical.  If ‘TRUE’ then the names of the variables in the
+#### data frame are checked to ensure that they are syntactically valid variable names. 
+```
+
+
+
+
+What rules does make.names() use to convert non-syntactic names into syntactic ones?
+```{r}
+#### my answer. cit [stackoverflow]
+#### The character "X" is prepended if necessary. All invalid characters are translated to ".". 
+#### A missing value is translated to "NA". Names which match R keywords have a dot appended to them.
+#### Duplicated values are altered by make.unique
+?make.names
+```
+
+
+
+I slightly simplified the rules that govern syntactic names. Why is .123e1 not a syntactic name? 
+Read ?make.names for the full details.
+```{r}
+#### my answer
+#### it begins with ""." . let's try.
+make.names(.123e1)
+```
+
+
+
+Why is tracemem(1:10) not useful?
+Because 1:10 is on a fixed memory address (and this address cannot change), i.e. 1:10 is not a variable
+
+
+
+Explain why tracemem() shows two copies when you run this code. Hint: carefully look at the difference between this code and the code shown earlier in the section.
+```{r}
+x <- c(1L, 2L, 3L)
+tracemem(x)
+
+x[[3]] <- 4
+
+### my answer 
+### before x is an integer then a double
+
+```
+
+
+
+What happens when you run this code?
+```{r}
+x <- list(1:10)
+x[[2]] <- x
+###my answer
+### we can simply use ref()
+ref(x)
+
+```
+
+
+
+In the following example, why are object.size(y) and obj_size(y) so radically different? Consult the documentation of object.size().
+```{r}
+y <- rep(list(runif(1e4)), 100)
+
+object.size(y)
+#> 8005648 bytes
+obj_size(y)
+#> 80,896 B
+###my answer
+### obj_size counts shared item only one time
+```
+
+Take the following list. Why is its size somewhat misleading?
+```{r}
+funs <- list(mean, sd, var)
+obj_size(funs)
+#> 17,608 B
+### my answer
+### i read the solution.
+```
+
+Predict the output of the following code:
+```{r}
+a <- runif(1e6)
+lobstr::obj_size(a)
+
+b <- list(a, a)
+lobstr::obj_size(b)
+lobstr::obj_size(a, b)
+
+b[[1]][[1]] <- 10
+lobstr::obj_size(b)
+lobstr::obj_size(a, b)
+
+b[[2]][[1]] <- 10
+lobstr::obj_size(b)
+lobstr::obj_size(a, b)
+```
+
+
+Explain why the following code doesn’t create a circular list.
+```{r}
+x <- list()
+x[[1]] <- x
+
+###my answer
+### because R has the copy on modify.
+```
+
+Wrap the two methods for subtracting medians into two functions, then use the ‘bench’ package17 to carefully compare their speeds. How does performance change as the number of columns increase?
+I dont know how
+
+
+What happens if you attempt to use tracemem() on an environment?
+It won't work on env.

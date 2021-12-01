@@ -1,0 +1,257 @@
+---
+title: "Esercizi_capitolo3"
+author: "Alessandro Dell'Orto"
+date: "December 1, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Capitolo 3
+
+\stepcounter{section}
+## Atomic vectors
+
+
+__[Q1]{.Q}__: How do you create raw and complex scalars? (See `?raw` and `?complex`.)
+__[A]{.solved}__: 
+```{r}
+?raw
+?complex
+```
+The raw type is intended to hold raw bytes. raw creates a raw vector of the specified length. Each element of the vector is equal to 0. Raw vectors are used to store fixed-length sequences of bytes
+Complex vectors can be created with complex. The vector can be specified either by giving its length, its real and imaginary parts, or modulus and argument. (Giving just the length generates a vector of complex zeroes.)
+```{r}
+xx <- raw(length = 1)
+z  <- complex(length.out = 1, real = 1, imaginary = 1)
+print(xx)
+print(z)
+```
+
+
+__[Q2]{.Q}__: Test your knowledge of vector coercion rules by predicting the output of the following uses of `c()`:
+__[A]{.solved}__: R follows this order character → double → integer → logical
+```{r, eval = FALSE}
+c(1, FALSE)      # 1 0 (double)
+c("a", 1)        # "a" "1"
+c(TRUE, 1L)      # 1 1 (integer)
+```
+
+
+__[Q3]{.Q}__: Why is `1 == "1"` true? Why is `-1 < FALSE` true? Why is `"one" < 2` false?
+__[A]{.solved}__: 1=="1" because 1 is coerced to "1". -1<FALSE because FALSE is coerced to double 0. "one"<2 because 2 becomes "2" and if we have the order 0,1,3,4,5,6,7,8,9,a,b,c... then "2" precedes "o"
+
+
+__[Q4]{.Q}__: Why is the default missing value, `NA`, a logical vector? What's special about logical vectors? (Hint: think about `c(FALSE, NA_character_)`.)
+__[A]{.solved}__: Because logical it the last in the order of coercion and so it won't coerce the data in the vectors. Let's assume c(FALSE, NA_character_) in this case the first element will be coerced to char "FALSE". Horrible!
+
+
+__[Q5]{.Q}__: Precisely what do `is.atomic()`, `is.numeric()`, and `is.vector()` test for?
+__[A]{.solved}__: Simple:
+
+```{r, eval = FALSE}
+?is.atomic()
+?is.numeric()
+?is.vector()
+```
+
+
+## Attributes
+
+__[Q1]{.Q}__: How is `setNames()` implemented? How is `unname()` implemented? Read the source code.
+__[A]{.solved}__: the code of setNames is :
+```{r, eval = FALSE}
+#View(setNames)
+print(args(setNames))
+print(body(setNames))
+```
+unname() is:
+```{r, eval = FALSE}
+#View(unname)
+print(args(unname))
+print(body(unname))
+```
+
+
+__[Q2]{.Q}__: What does `dim()` return when applied to a 1-dimensional vector? When might you use `NROW()` or `NCOL()`?
+__[A]{.solved}__: as always:
+```{r}
+?dim
+?NROW
+?NCOL
+#we can try
+v <- c(1,2,3)
+dim(v)  ##v is 1-D so NULL
+NROW(v) ##see the vector v as column vector 3x1
+NCOL(v)
+```
+
+__[Q3]{.Q}__: How would you describe the following three objects? What makes them different to `1:5`?
+```{r}
+x1 <- array(1:5, c(1, 1, 5))
+x2 <- array(1:5, c(1, 5, 1))
+x3 <- array(1:5, c(5, 1, 1))
+```
+__[A]{.solved}__: 3D array (h \* l \* w). x1 (1 \* 1 \* 5), x2 (1 \* 5 \* 1), x3 (5 \* 1 \* 1)
+
+
+__[Q4]{.Q}__: An early draft used this code to illustrate `structure()`:
+```{r}
+structure(1:5, comment = "my attribute")
+```
+But when you print that object you don't see the comment attribute. Why? Is the attribute missing, or is there something else special about it? (Hint: try using help.)
+__[A]{.solved}__: 
+```{r}
+?structure
+?comment
+```
+cit. Contrary to other attributes, the comment is not printed (by print or print.default).
+
+## S3 atomic vectors
+<!-- 3.4 -->
+__[Q1]{.Q}__: What sort of object does `table()` return? What is its type? What attributes does it have? How does the dimensionality change as you tabulate more variables?
+__[A]{.solved}__: and again:
+```{r}
+?table ## cit. table uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels.
+#View(table)
+a <- letters[1:3]
+b <- letters[7:9]
+a
+b
+tab <- table(a,b) 
+tab
+attributes(tab) ##
+typeof(tab)
+```
+
+
+__[Q2]{.Q}__: What happens to a factor when you modify its levels?
+
+```{r, eval = FALSE}
+f1 <- factor(letters)
+levels(f1) <- rev(levels(f1))
+```
+
+__[A]{.solved}__: let's try.
+
+```{r}
+f1 <- factor(letters)
+f1
+levels(f1) <- rev(levels(f1))
+f1
+```
+
+
+__[Q3]{.Q}__: What does this code do? How do `f2` and `f3` differ from `f1`?
+
+```{r, results = "none"}
+f2 <- rev(factor(letters))
+
+f3 <- factor(letters, levels = rev(letters))
+```
+
+__[A]{.solved}__: f2 reverse letter order but not reversed levels order. f3 reverse levels not letter order. f1 reversed levels and letters order.  
+
+```{r}
+f2 <- rev(factor(letters))
+f3 <- factor(letters, levels = rev(letters))
+f1
+f2
+f3
+```
+
+
+
+## Lists
+
+__[Q1]{.Q}__: List all the ways that a list differs from an atomic vector.
+
+__[A]{.solved}__: elements in atomic are of the same type, in list can be different. Atomic have one memory address while list have one memory address for each element.
+
+
+__[Q2]{.Q}__: Why do you need to use `unlist()` to convert a list to an atomic vector? Why doesn't `as.vector()` work?
+__[A]{.solved}__: 
+```{r}
+?list ## cit. Almost all lists in R internally are Generic Vectors...
+
+##try
+xx<-list(1,1:2,letters)
+typeof(xx)
+as.vector(xx)
+typeof(xx)
+unlist(xx)
+typeof(xx)
+```
+
+
+__[Q3]{.Q}__: Compare and contrast `c()` and `unlist()` when combining a date and date-time into a single vector.
+__[A]{.solved}__: 
+```{r, eval = FALSE}
+mydates <- as.Date("2017-04-05",format='%Y-%m-%d')
+mydatetime <- as.POSIXct("2005-10-21 18:47:22",format='%Y-%m-%d %H:%M:%S')
+cc<-c(mydates,mydatetime)
+cc     ### i don't know what's happening
+as.double(mydatetime)
+as.Date(mydatetime)
+typeof(cc)       
+
+
+listd<-list(mydates,mydatetime)
+listd
+typeof(listd)
+unlist(listd) ##this is good. for Date it counts the days and for datetime it counts the seconds since 01 01 1970
+```
+
+
+## Data frames and tibbles
+
+__[Q1]{.Q}__: Can you have a data frame with zero rows? What about zero columns?
+
+__[A]{.solved}__: let's try
+
+```{r}
+## zero rows and zero columns
+data.frame(blanco = c())
+```
+
+
+__[Q2]{.Q}__: What happens if you attempt to set rownames that are not unique?
+
+__[A]{.solved}__: in data_frame rownames must be unique. let's see
+
+```{r}
+?row.names ## cit. All data frames have a row names attribute, a character vector of length the number of rows with no duplicates nor missing values.
+data.frame(x=c(1,2,3), row.names = c("primo", "secondo", "secondo"))
+```
+
+
+__[Q3]{.Q}__: If `df` is a data frame, what can you say about `t(df)`, and `t(t(df))`? Perform some experiments, making sure to try different column types.
+
+__[A]{.solved}__: let's try
+
+```{r}
+?t() ##cit. matrix transpose Given a matrix or data.frame x, t returns the transpose of x. !!!A data frame is first coerced to a matrix!!!
+df <- data.frame(x = 1:3, y = c('pippo','pluto','topolino'))
+is.matrix(df)
+is.matrix(t(df))
+is.matrix(t(t(df)))
+dim(df)
+dim(t(df))
+dim(t(t(df)))
+```
+
+
+__[Q4]{.Q}__: What does `as.matrix()` do when applied to a data frame with columns of different types? How does it differ from `data.matrix()`?
+
+__[A]{.solved}__: look at the help
+```{r}
+?as.matrix 
+##as.matrix is a generic function. The method for data frames will return a character matrix if there is only atomic columns and any non-(numeric/logical/complex) column, applying as.vector to factors and format to other non-character columns. Otherwise, the usual coercion hierarchy (logical < integer < double < complex) will be used
+?data.matrix
+## Return the matrix obtained by converting all the variables in a data frame to numeric mode and then binding them together as the columns of a matrix. Factors and ordered factors are replaced by their internal codes.
+df
+as.matrix(df)
+data.matrix(df)
+```
