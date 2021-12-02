@@ -1,0 +1,181 @@
+---
+title: "Esercizi_capitolo3"
+author: "Alessandro Dell'Orto"
+date: "12/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Subsetting 
+
+## Selecting multiple elements
+
+__[Q1]{.Q}__: Fix each of the following common data frame subsetting errors:
+
+```{r, eval = FALSE}
+mtcars[mtcars$cyl = 4, ]
+
+mtcars[-1:4, ]
+
+mtcars[mtcars$cyl <= 5]
+
+mtcars[mtcars$cyl == 4 | 6, ]
+
+```
+__[A]{.solved}__: 
+```{r, eval = FALSE}
+mtcars[mtcars$cyl == 4, ] ## ==
+
+mtcars[1:4, ] ## or all negative or all positive
+
+mtcars[mtcars$cyl <= 5,] ## missing ,
+
+mtcars[mtcars$cyl == 4 | mtcars$cyl == 6, ] ##second condition
+
+```
+
+
+
+__[Q2]{.Q}__: Why does the following code yield five missing values? (Hint: why is it different from `x[NA_real_]`?)
+
+```{r}
+x <- 1:5
+x[NA]
+```
+
+__[A]{.solved}__: NA is logical, and with x[NA] we are creating a subset using a logical vector
+
+```{r}
+typeof(NA)
+
+x <- 1:5
+
+x[NA]
+x[TRUE]
+x[FALSE]
+
+```
+
+__[Q3]{.Q}__: What does `upper.tri()` return? How does subsetting a matrix with it work? Do we need any additional subsetting rules to describe its behaviour?
+
+```{r echo = TRUE, results = 'hide'}
+x <- outer(1:5, 1:5, FUN = "*")
+x[upper.tri(x)]
+```
+
+__[A]{.solved}__: let's see
+```{r}
+?upper.tri ## cit. Returns a matrix of logicals the same size of a given matrix with entries TRUE in the lower or upper triangle.
+x
+upper.tri(x)
+
+##i don't get the last question
+```
+
+
+__[Q4]{.Q}__: Why does `mtcars[1:20]` return an error? How does it differ from the similar `mtcars[1:20, ]`?
+__[A]{.solved}__: with df[] you are selecting columns, while df[,] you are selecting rows 
+```{r}
+mtcars ## this is the df. only 11 columns
+```
+```{r}
+mtcars[1:2] ##select only col 1 and 2
+mtcars[1:2,]#select only row 1 and 2
+```
+
+
+
+__[Q5]{.Q}__: Implement your own function that extracts the diagonal entries from a matrix (it should behave like `diag(x)` where `x` is a matrix).
+__[A]{.solved}__: let's try
+```{r}
+diagonalley <- function(M) {
+  n<-min(dim(M))
+  delta<-1:n
+  M[cbind(delta,delta)]
+}
+# Let's check if it works
+MM <- matrix(1:48, 6)
+print(MM)
+diag(MM)
+diagonalley(MM)
+```
+
+
+__[Q6]{.Q}__: What does `df[is.na(df)] <- 0` do? How does it work?
+
+__[A]{.solved}__: imputation! nan become 0. first use a logical vector to subset only nan then assign them 0 value
+
+## Selecting a single element
+
+__[Q1]{.Q}__: Brainstorm as many ways as possible to extract the third value from the `cyl` variable in the `mtcars` dataset.
+
+__[A]{.solved}__:
+
+```{r}
+
+mtcars$cyl[3]
+mtcars$cyl[[3]]
+mtcars[3,"cyl"]
+mtcars[[3,"cyl"]]
+mtcars[3,][["cyl"]]
+mtcars[3,]["cyl"][[1]]
+```
+
+__[Q2]{.Q}__: Given a linear model, e.g. `mod <- lm(mpg ~ wt, data = mtcars)`, extract the residual degrees of freedom. Extract the R squared from the model summary (`summary(mod)`).
+
+__[A]{.solved}__: 
+
+```{r}
+?lm  ## An object of class "lm" is a list containing at least the following components:...
+mod <- lm(mpg ~ wt, data = mtcars)
+
+head(mod)
+```
+
+```{r}
+mod$df.residual
+summary(mod)$r.squared
+```
+
+\stepcounter{section}
+## Applications
+
+__[Q1]{.Q}__: How would you randomly permute the columns of a data frame? (This is an important technique in random forests.) Can you simultaneously permute the rows and columns in one step?
+
+__[A]{.solved}__: thanks to stackoverflow:
+
+```{r,eval = FALSE}
+mtcars[sample(nrow(mtcars)),] #permute rows
+mtcars[sample(ncol(mtcars))]  #permute col
+mtcars[sample(nrow(mtcars)),sample(ncol(mtcars))] #permute row and col
+
+```
+
+__[Q2]{.Q}__: How would you select a random sample of `m` rows from a data frame? What if the sample had to be contiguous (i.e. with an initial row, a final row, and every row in between)?
+
+__[A]{.solved}__: first question 
+
+```{r, eval = FALSE}
+?sample ##sample(x, size,...)
+m <- 5
+mtcars[sample(nrow(mtcars), m), ]
+```
+second question
+
+```{r, eval = FALSE}
+randrow <- as.integer(runif(1,min=1,max=nrow(mtcars)-m))  ## non mi piace
+mtcars[randrow:(randrow+m-1),]
+```
+
+__[Q3]{.Q}__: How could you put the columns in a data frame in alphabetical order?
+
+__[A]{.solved}__:
+```{r, eval = FALSE}
+head(mtcars)
+nomi<-names(mtcars)
+ordnom<-order(nomi)
+head(mtcars[ordnom])
+```
