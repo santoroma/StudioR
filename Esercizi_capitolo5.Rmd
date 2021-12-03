@@ -1,0 +1,141 @@
+---
+title: "Esercizi_capitolo5"
+author: "Alessandro Dell'Orto"
+date: "12/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Control flow
+
+\stepcounter{section}
+## Choices
+
+
+__[Q1]{.Q}__: What type of vector does each of the following calls to `ifelse()` return?
+
+```{r, eval = FALSE}
+ifelse(TRUE, 1, "no")
+ifelse(FALSE, 1, "no")
+ifelse(NA, 1, "no")
+```
+
+__[A]{.solved}__: 
+
+```{r}
+?ifelse  ##ifelse(test, yes, no) returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.
+##       | yes if x=TRUE
+## f(x)= | no  if x=FALSE NB typeof(x) is coerced to logical
+##       | NA  if x=NA
+
+##without coercion
+ifelse(TRUE, 1, "no")
+ifelse(FALSE, 1, "no")
+ifelse(NA, 1, "no")
+##with coercion
+ifelse(0,'yes','no')
+ifelse(1,'yes','no')
+ifelse('lept1','yes','no')
+ifelse(2.5,'yes','no')
+ifelse(-2.5,'yes','no')
+ifelse(-2L,'yes','no')
+ifelse(2L,'yes','no')
+ifelse(0L,'yes','no')
+ifelse(0.5,'yes','no')
+ifelse(0.0,'yes','no')
+ifelse(c(),'yes','no')
+ifelse(c(0),'yes','no')
+ifelse(c(0,1,3),'yes','no')
+ifelse(list(0,1,3),'yes','no')
+
+```
+
+__[Q2]{.Q}__: Why does the following code work?
+
+```{r}
+x <- 1:10
+if (length(x)) "not empty" else "empty"
+
+x <- numeric()
+if (length(x)) "not empty" else "empty"
+```
+
+__[A]{.solved}__: lenght(x) is coerced to logical
+```{r}
+x <- 1:10
+if (length(x)) "not empty" else "empty"
+(as.logical(length(x)))
+
+x <- 0
+if (length(x)) "not empty" else "empty"
+(as.logical(length(x)))
+
+x <- numeric()
+if (length(x)) "not empty" else "empty"
+(as.logical(length(x)))
+```
+## Loops
+
+__[Q1]{.Q}__: Why does this code succeed without errors or warnings?
+
+```{r, results = FALSE}
+x <- numeric()
+out <- vector("list", length(x))
+for (i in 1:length(x)) {
+  out[i] <- x[i] ^ 2
+}
+out
+```
+
+__[A]{.solved}__: print it
+
+```{r, results = FALSE}
+x <- numeric() 
+cat('lunghezza x = ',length(x), "\n")
+print(x)
+out <- vector("list", length(x))
+cat('lunghezza out = ',length(out), "\n")
+#tracemem(out)
+for (i in 1:length(x)) {   ##from 1 to 0
+  cat('i = ',i, "\n")
+  cat('x[i] = ',x[i], "\n")
+  out[i] <- x[i] ^ 2       ## x[1] is NA (it does not exist), x[0] is blank and add an empty element to a list does not affect its length
+}
+print(out)
+```
+
+__[Q2]{.Q}__: When the following code is evaluated, what can you say about the vector being iterated?
+
+```{r}
+xs <- c(1, 2, 3)
+for (x in xs) {
+  xs <- c(xs, x * 2)
+}
+xs
+```
+
+__[A]{.solved}__: print it
+
+```{r}
+xs <- c(1, 2, 3)
+tracemem(xs)
+for (x in xs) {     ## x takes the values from xs before the loop and stores them
+  print(x)
+  xs <- c(xs, x * 2)
+}
+xs
+```
+
+__[Q3]{.Q}__: What does the following code tell you about when the index is updated?
+
+```{r}
+for (i in 1:3) {
+  i <- i * 2
+  print(i) 
+}
+```
+
+__[A]{.solved}__: As before. i takes the values before the loop and stores them and they can't be modified
