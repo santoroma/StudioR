@@ -73,6 +73,7 @@ x
 upper.tri(x)
 
 ##i don't get the last question
+### MARIO try with stackoverflow
 ```
 
 
@@ -84,6 +85,8 @@ mtcars ## this is the df. only 11 columns
 ```{r}
 mtcars[1:2] ##select only col 1 and 2
 mtcars[1:2,]#select only row 1 and 2
+
+### MARIO try mtcars[1:2,], mtcars[1:2] and mtcars[,1:2] 
 ```
 
 
@@ -101,6 +104,7 @@ MM <- matrix(1:48, 6)
 print(MM)
 diag(MM)
 diagonalley(MM)
+## MARIO good but you are not checking if x is a matrix...
 ```
 
 
@@ -138,6 +142,7 @@ head(mod)
 ```{r}
 mod$df.residual
 summary(mod)$r.squared
+# MARIO quest'ultimo non mi piace perchè passa dal summary, meglio sempre estralo direttamente
 ```
 
 \stepcounter{section}
@@ -167,6 +172,7 @@ second question
 
 ```{r, eval = FALSE}
 randrow <- as.integer(runif(1,min=1,max=nrow(mtcars)-m))  ## non mi piace
+## MARIO neanche a me
 mtcars[randrow:(randrow+m-1),]
 ```
 
