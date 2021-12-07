@@ -31,6 +31,11 @@ xx <- raw(length = 1)
 z  <- complex(length.out = 1, real = 1, imaginary = 1)
 print(xx)
 print(z)
+### MARIO solo un'osservazione
+### puoi anche stampare direttamente con 
+xx
+z
+## C'è differenza?
 ```
 
 
@@ -75,6 +80,8 @@ unname() is:
 #View(unname)
 print(args(unname))
 print(body(unname))
+### MARIO snche piu velocemente
+uname
 ```
 
 
