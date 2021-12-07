@@ -21,6 +21,15 @@ names(df) <- c(1, 2)
 df[3]<-df[1]+df[2]
 names(df[3])<-3
 print(df)
+### MARIO Puoi provare a rifarlo usando $ come chiesto nell'esempio
+### attenzione ad usare quel formalismo che può essere fuorviante
+#guarda questo codice
+df <- data.frame(runif(3), runif(3))
+names(df) <- c(2, 1)
+df[3]<- df[1] - df[2]
+names(df[3])<-3
+print(df)
+# dobbiamo essere sicuri non solo che il codice funzioni ma che risponda ai cambiamenti che facciamo nel modo giusto
 ```
 
 
@@ -134,7 +143,8 @@ x[[2]] <- x
 ###my answer
 ### we can simply use ref()
 ref(x)
-
+### MARIO ref() viene da un pacchetto? Non la conosco come funzione base di R e non mi risulta. Poichè viene da un pacchetto che non mi sembra carichi
+### all'inizio del RMarkdown o library(lobstr) o lobstr::ref(). Funziona questo markdown?
 ```
 
 
@@ -158,6 +168,7 @@ obj_size(funs)
 #> 17,608 B
 ### my answer
 ### i read the solution.
+## MARIO e che c'era scritto?
 ```
 
 Predict the output of the following code:
@@ -194,3 +205,4 @@ I dont know how
 
 What happens if you attempt to use tracemem() on an environment?
 It won't work on env.
+MARIO Why?
